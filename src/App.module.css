@@ -1,0 +1,4 @@
+.active {
+  background-color: rgb(188, 188, 248);
+  transition: all 0.4s;
+}

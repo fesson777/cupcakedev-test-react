@@ -1,5 +1,7 @@
 import axios, { AxiosRequestConfig } from 'axios'
 import { AxiosResponse } from 'axios'
+import { ResponseData } from './type'
+import { transformData } from './utils/utils'
 
 const request = axios.create({
   baseURL: 'http://localhost:3000/api/v1',
@@ -9,7 +11,7 @@ const request = axios.create({
   },
 })
 
-export async function getMarketData(endpoint: string) {
+async function getMarketData(endpoint: string) {
   try {
     const response: AxiosResponse<
       ResponseData,
@@ -29,13 +31,12 @@ export const apiEndpoitns = {
   thirdMarket: '/third',
 }
 
-export type ResponseData = {
-  rates: {
-    RUB: number
-    USD: number
-    EUR: number
+export async function getMarketsData() {
+  const resp1 = await getMarketData(apiEndpoitns.firstMarket)
+  const resp2 = await getMarketData(apiEndpoitns.secondMarket)
+  const resp3 = await getMarketData(apiEndpoitns.thirdMarket)
+  if (resp1 && resp2 && resp3) {
+    const data = transformData(resp1, resp2, resp3)
+    return data
   }
-  base: string
-  timestamp: number
-  date: string
 }
