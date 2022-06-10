@@ -1,22 +1,16 @@
-export function transformData(data1, data2, data3) {
-  const addFields = [data1, data2, data3].reduce((acc, { url, data }) => {
-    const { rates } = data
-    const shopNum = url.slice(1)
+export function transformData(arr) {
+  const addFields = arr.reduce((acc, { market, data }) => {
+    const { rates } = data;
     return [
       ...acc,
-      {
-        ...{
-          name: 'RUB/CUPCAKE',
-          [shopNum]: Math.abs(rates.RUB.toFixed(2)),
-        },
-      },
-      { name: 'EUR/CUPCAKE', [shopNum]: Math.abs(rates.EUR.toFixed(2)) },
-      { name: 'USD/CUPCAKE', [shopNum]: Math.abs(rates.USD.toFixed(2)) },
-      { name: 'RUB/USD', [shopNum]: (rates.RUB / rates.USD).toFixed(2) },
-      { name: 'RUB/EUR', [shopNum]: (rates.RUB / rates.EUR).toFixed(2) },
-      { name: 'EUR/USD', [shopNum]: (rates.EUR / rates.USD).toFixed(2) },
-    ]
-  }, [])
+      { currency: "RUB/CUPCAKE", [market]: formatCurValue(rates.RUB) },
+      { currency: "EUR/CUPCAKE", [market]: formatCurValue(rates.EUR) },
+      { currency: "USD/CUPCAKE", [market]: formatCurValue(rates.USD) },
+      { currency: "RUB/USD", [market]: formatCurPairValue(rates.RUB, rates.USD) },
+      { currency: "RUB/EUR", [market]: formatCurPairValue(rates.RUB, rates.EUR) },
+      { currency: "EUR/USD", [market]: formatCurPairValue(rates.EUR, rates.USD) },
+    ];
+  }, []);
 
   const f1 = unite(addFields, 'RUB/CUPCAKE')
   const f2 = unite(addFields, 'USD/CUPCAKE')
@@ -25,30 +19,27 @@ export function transformData(data1, data2, data3) {
   const f5 = unite(addFields, 'RUB/EUR')
   const f6 = unite(addFields, 'EUR/USD')
 
-  return [f1, f2, f3, f4, f5, f6].map((row, i) => ({
+  return [f1, f2, f3, f4, f5, f6].map(row => ({
     ...row,
-    active: finMax(row),
+    minValue: getMinValue(row),
   }))
 }
 
-function unite(arr, field) {
+function formatCurValue(value) {
+  return Math.abs(value.toFixed(2));
+}
+function formatCurPairValue(v1, v2) {
+  return (v1 / v2).toFixed(2);
+}
+
+function unite(arr, currency) {
   return arr
-    .slice()
-    .filter((row) => {
-      return row.name === field
-    })
-    .reduce((result, row) => {
-      return { ...result, ...row }
+    .filter(row => row.currency === currency)
+    .reduce((acc, row) => {
+      return { ...acc, ...row }
     }, {})
 }
 
-function finMax(obj) {
-  let active = ''
-  const min = Math.min(obj.first, obj.second, obj.third)
-  Object.keys(obj).forEach((key) => {
-    if (Number(obj[key]) === min) {
-      active = key
-    }
-  })
-  return active
+function getMinValue(data) {
+  return Math.min(data.first, data.second, data.third);
 }

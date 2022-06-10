@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import clsx from 'clsx';
+import { useEffect, useState } from 'react'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
@@ -9,26 +10,37 @@ import Paper from '@mui/material/Paper'
 import { Container } from '@mui/system'
 import { getMarketsData } from './api'
 import classes from './App.module.css'
-import { currencyObj } from './type'
+import type { CurrencyPair } from './type'
+
+type State = Array<{
+  currency: CurrencyPair
+  first: string
+  second: string
+  third: string
+  minValue: string
+}>
 
 function App() {
-  const [data, setData] = useState<currencyObj[]>([])
+  const [data, setData] = useState<State>([]);
 
   useEffect(() => {
-    getMarketsData().then((items) => (items ? setData(items) : null))
-  }, [])
+    window.setInterval(() => {
+      getData();
+    }, 1000);
+  }, []);
 
-  useEffect(() => {
-    setInterval(() => {
-      getMarketsData().then((items) => (items ? setData(items) : null))
-    }, 1000)
-  }, [setInterval])
+  async function getData() {
+    const response = await getMarketsData();
+    if (response) {
+      setData(response);
+    }
+  }
 
   return (
-    <div className="App" style={{ minHeight: '100vh', minWidth: '100%' }}>
-      <Container sx={{ display: 'flex', justifyContent: 'center' }}>
-        <TableContainer component={Paper} sx={{ maxWidth: 450 }}>
-          <Table sx={{ maxWidth: 450 }} aria-label="table">
+    <div className={classes.root} >
+      <Container className={classes.container}>
+        <TableContainer component={Paper} className={classes.table_container}>
+          <Table className={classes.table} aria-label="table">
             <TableHead>
               <TableRow>
                 <TableCell>Pair Name/market</TableCell>
@@ -38,35 +50,29 @@ function App() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data.map((row: any, i: number) => (
+              {data.map((row) => (
                 <TableRow
-                  key={i}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  key={row.currency}
+                  className={classes.table_row}
                 >
                   <TableCell component="th" scope="row">
-                    {row.name}
+                    {row.currency}
                   </TableCell>
                   <TableCell
                     align="center"
-                    className={[row.active === 'first' && classes.active].join(
-                      ' '
-                    )}
+                    className={clsx(row.minValue === row.first && classes.active)}
                   >
                     {row.first}
                   </TableCell>
                   <TableCell
                     align="center"
-                    className={[row.active === 'second' && classes.active].join(
-                      ' '
-                    )}
+                    className={clsx(row.minValue === row.second && classes.active)}
                   >
                     {row.second}
                   </TableCell>
                   <TableCell
                     align="center"
-                    className={[row.active === 'third' && classes.active].join(
-                      ' '
-                    )}
+                    className={clsx(row.minValue === row.third && classes.active)}
                   >
                     {row.third}
                   </TableCell>
@@ -80,4 +86,4 @@ function App() {
   )
 }
 
-export default App
+export default App;

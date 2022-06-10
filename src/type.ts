@@ -9,18 +9,12 @@ export type ResponseData = {
   date: string
 }
 
-type dataNames =
+export type Market = 'first' | 'second' | 'third';
+
+export type CurrencyPair =
   | 'RUB/CUPCAKE'
   | 'USD/CUPCAKE'
   | 'EUR/CUPCAKE'
   | 'RUB/USD'
   | 'RUB/EUR'
-  | 'EUR/USD'
-
-export type currencyObj = {
-  name: dataNames
-  first: string
-  second: string
-  third: string
-  active: string
-}
+  | 'EUR/USD';
