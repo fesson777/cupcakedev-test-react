@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { transformData } from "./utils/utils";
+import { normalizeData } from "./utils/utils";
 import type { Market, ResponseData } from "./type";
 
 const request = axios.create({
@@ -17,7 +17,9 @@ export const marketEndpoints: Record<Market, string> = {
 
 async function getMarketData(market: Market) {
   try {
-    const response: AxiosResponse<ResponseData> = await request.get(marketEndpoints[market]);
+    const response: AxiosResponse<ResponseData> = await request.get(
+      marketEndpoints[market]
+    );
     return { data: response.data, market };
   } catch (error) {
     console.error("API ~ getMarketData ~", error);
@@ -29,7 +31,7 @@ export async function getMarketsData() {
   const resp2 = await getMarketData("second");
   const resp3 = await getMarketData("third");
   if (resp1 && resp2 && resp3) {
-    const data = transformData([resp1, resp2, resp3]);
+    const data = normalizeData([resp1, resp2, resp3]);
     return data;
   }
 }
