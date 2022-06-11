@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -8,23 +8,30 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { Container } from "@mui/system";
-import { getMarketsData } from "./api";
+import { getMarketData } from "api";
+import type { Market } from "types";
+import { Context } from "store/context";
+import { enrichMarketData } from "utils";
+import { markets } from "utils/config";
 import classes from "./App.module.css";
-import type { CurrencyData } from "./type";
 
 function App() {
-  const [data, setData] = useState<CurrencyData[]>([]);
+  const {
+    dispatch,
+    state: { data },
+  } = useContext(Context);
 
   useEffect(() => {
     window.setInterval(() => {
-      getData();
+      markets.forEach(market => getData(market));
     }, 1000);
   }, []);
 
-  async function getData() {
-    const response = await getMarketsData();
+  async function getData(market: Market) {
+    const response = await getMarketData(market);
     if (response) {
-      setData(response);
+      const data = enrichMarketData(response);
+      dispatch({ type: "SET_MARKET_DATA", payload: data });
     }
   }
 

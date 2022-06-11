@@ -1,6 +1,5 @@
-import axios, { AxiosResponse } from "axios";
-import { normalizeData } from "./utils/utils";
-import type { Market, ResponseData } from "./type";
+import axios from "axios";
+import type { Market, ResponseData } from "types";
 
 const request = axios.create({
   baseURL: "http://localhost:3000/api/v1",
@@ -15,23 +14,11 @@ export const marketEndpoints: Record<Market, string> = {
   third: "/third",
 };
 
-async function getMarketData(market: Market) {
+export async function getMarketData(market: Market) {
   try {
-    const response: AxiosResponse<ResponseData> = await request.get(
-      marketEndpoints[market]
-    );
+    const response = await request.get<ResponseData>(marketEndpoints[market]);
     return { data: response.data, market };
   } catch (error) {
     console.error("API ~ getMarketData ~", error);
-  }
-}
-
-export async function getMarketsData() {
-  const resp1 = await getMarketData("first");
-  const resp2 = await getMarketData("second");
-  const resp3 = await getMarketData("third");
-  if (resp1 && resp2 && resp3) {
-    const data = normalizeData([resp1, resp2, resp3]);
-    return data;
   }
 }

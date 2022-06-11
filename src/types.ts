@@ -23,3 +23,15 @@ export type CurrencyData = {
   currency: CurrencyPair;
   minValue: number;
 } & Record<Market, number>;
+
+export type MarketData = {
+  market: Market;
+  data: ResponseData;
+};
+
+export type EnrichedMarketData = Record<CurrencyPair, number>;
+
+export type EnrichedMarketDataMap = {
+  market: Market;
+  data: EnrichedMarketData;
+};
