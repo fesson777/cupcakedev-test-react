@@ -1,10 +1,5 @@
-import { Dispatch } from "react";
-import type {
-  Market,
-  CurrencyData,
-  EnrichedMarketData,
-  EnrichedMarketDataMap,
-} from "types";
+import { Dispatch } from 'react';
+import type { Market, CurrencyData, EnrichedMarketData, EnrichedMarketDataMap } from 'types';
 
 export type State = {
   markets: Record<Market, EnrichedMarketData>;
@@ -17,7 +12,7 @@ export type Ctx = {
 };
 
 export type SetMarketDataAction = {
-  type: "SET_MARKET_DATA";
+  type: 'SET_MARKET_DATA';
   payload: EnrichedMarketDataMap;
 };
 

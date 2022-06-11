@@ -1,7 +1,7 @@
-import { createContext, useReducer } from "react";
-import type { EnrichedMarketData } from "types";
-import type { State, Ctx } from "store/types";
-import { reducer } from "./reducer";
+import { createContext, useReducer } from 'react';
+import type { EnrichedMarketData } from 'types';
+import type { State, Ctx } from 'store/types';
+import { reducer } from './reducer';
 
 const initState: State = {
   markets: {
@@ -21,7 +21,5 @@ export const Context = createContext(initCtx);
 
 export function ContextProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initState);
-  return (
-    <Context.Provider value={{ state, dispatch }}>{children}</Context.Provider>
-  );
+  return <Context.Provider value={{ state, dispatch }}>{children}</Context.Provider>;
 }
