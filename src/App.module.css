@@ -1,3 +1,26 @@
+.root {
+  min-height: 100vh;
+  min-width: 100%;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+}
+
+.table_container {
+  max-width: 450px;
+}
+
+.table {
+  max-width: 450px;
+}
+
+.table_row:last-child td,
+.table_row:last-child th {
+  border: 0;
+}
+
 .active {
   background-color: rgb(188, 188, 248);
   transition: all 0.4s;
